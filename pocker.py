@@ -1,17 +1,20 @@
 import random
 
 # Define ranks and suits for the deck
-ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'J', 'Q', 'K', 'A']
+ranks = ['2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King', 'Ace']
 suits = ['Hearts', 'Diamonds', 'Clubs', 'Spades']
 
-new_ranks= ['4', '5', '6', '7', '8', '9', '10']
+#new deck to ensure the table card does is'nt a special card
+new_ranks= ['4', '5', '6', '7', '9', '10']
 new_suits= ['Hearts', 'Diamonds', 'Clubs', 'Spades']
-
 
 # Function to create and shuffle a deck of cards
 def create_deck():
     return [(rank, suit) for suit in suits for rank in ranks]
-        
+
+#function that treates a new deck without the special cards
+def new_deck():
+    return [(new_rank, new_suit) for new_suit in new_suits for new_rank in new_ranks]
 
 # Function to deal cards to players
 def deal_cards(deck, num_cards):
@@ -31,23 +34,25 @@ def is_match(card, table_card):
 def main():
     # Create and shuffle the deck
     deck = create_deck()
+    deck2 = new_deck()
     random.shuffle(deck)
+    random.shuffle(deck2)
 
     # Deal cards to players
     player_hand = deal_cards(deck, 4)
     computer_hand = deal_cards(deck, 4)
 
     # Place one card from the deck face up on the table
-    tablecard = [deck.pop()]
+    tablecard = [deck2.pop()]
 
     while True:
-        playermoves(player_hand, computer_hand, tablecard, deck)
-        computer_turn(player_hand, computer_hand, tablecard, deck)
+        playermoves(player_hand, computer_hand, tablecard, deck,deck2)
+        computer_turn(player_hand, computer_hand, tablecard, deck,deck2)
 
-def playermoves(player_hand, computer_hand, tablecard, deck):
+def playermoves(player_hand, computer_hand, tablecard, deck,deck2):
     print(f"Your hand: {player_hand}")
     print(f"Computer's hand: {computer_hand}")
-    print(f"table Cards: {tablecard}")
+    print(f"table Card: {tablecard}")
 
     rank = input("Enter the card rank: ").capitalize().strip()
     suit = input("Enter the card suit: ").capitalize().strip()
@@ -66,7 +71,7 @@ def playermoves(player_hand, computer_hand, tablecard, deck):
             tablecard[-1] = (tablecard[-1][0], newsuit)
             print(f"The game was changed to {newsuit}")
         if play[0] in ['8', 'King', 'Jack', 'Queen']:
-            return playermoves(player_hand, computer_hand, tablecard, deck)
+            return playermoves(player_hand, computer_hand, tablecard, deck,deck2)
             
     elif rank == "Pick": 
         player_hand.append(deck.pop())
@@ -74,9 +79,9 @@ def playermoves(player_hand, computer_hand, tablecard, deck):
         
     else:
         print(f"Card {play} is not playable. Please try again.")
-        playermoves(player_hand, computer_hand, tablecard, deck)
+        playermoves(player_hand, computer_hand, tablecard, deck,deck2)
 
-def computer_turn(player_hand, computer_hand, tablecard, deck):
+def computer_turn(player_hand, computer_hand, tablecard, deck, deck2):
     while True:
         # Choose a random card from the computer's hand
         play = random.choice(computer_hand)
@@ -84,8 +89,8 @@ def computer_turn(player_hand, computer_hand, tablecard, deck):
         # Check if the card matches the top card on the table
         if is_match(play, tablecard[-1]):
             # If the card has a special effect, apply it
-            if play[0] in ['3', '2'] and play[0] != 'Ace':
-                for _ in range(int(tablecard[-1][0])):
+            if play[0] in ['3', '2']:
+                for _ in range(int(play[0])):
                     computer_hand.append(deck.pop())
             tablecard.append(play)
             computer_hand.remove(play)
@@ -94,20 +99,23 @@ def computer_turn(player_hand, computer_hand, tablecard, deck):
                 tablecard[-1] = (tablecard[-1][0], newsuit)
                 print(f"The game was changed to {newsuit}")
             if play[0] in ['8', 'King', 'Jack', 'Queen']:
-                return computer_turn(player_hand, computer_hand, tablecard, deck)
+                return computer_turn(player_hand, computer_hand, tablecard, deck, deck2)
             break
         else:
-            # If the card doesn't match, remove it from the computer's hand
-            computer_hand.remove(play)
+            # If the card doesn't match, try another card
+            continue
 
     # If the computer has no cards left, it loses the game
     if not computer_hand:
         print("The computer has no cards left. You win!")
         return
 
- 
+    print(f"Computer played: {play}")
     print(f"Computer's hand: {computer_hand}")
-    print(f"table Cards: {tablecard}")
+    print(f"Table cards: {tablecard}")
+
+
+
 
 if __name__ == "__main__":
     main()
