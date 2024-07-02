@@ -29,3 +29,8 @@ def handle_special_card(play, computer_hand, player_hand, deck, tablecard):
                     break
             else:
                 print("Deck is empty, cannot draw a card.")
+
+    
+    elif play[0] in ["K", "J", "8", "Q"]:
+        pass
+
