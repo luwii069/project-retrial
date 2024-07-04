@@ -1,5 +1,5 @@
 def handle_special_card(play, computer_hand, player_hand, deck, tablecard, current_player):
-    rank, suit = play
+    (rank, suit)= play
     
     if rank == "2" and tablecard[-1][0] == "2":
         for _ in range(2):
